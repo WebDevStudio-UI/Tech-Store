@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrello | TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo"><h2><i class="fas fa-microchip"></i> TechStore</h2></div>
+        <nav><ul><li><a href="index.html">Home</a></li><li><a href="catalogo.html">Catalogo</a></li></ul></nav>
+        <div class="header-actions">
+            <a href="carrello.html" class="cart-icon"><i class="fas fa-shopping-cart"></i><span id="cart-badge" class="badge">1</span></a>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <div class="cart-items">
+            <h2>Il tuo Carrello</h2>
+            <div class="cart-item">
+                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=200&auto=format&fit=crop" alt="Laptop">
+                <div class="item-details">
+                    <h3>UltraBook 15" M2</h3>
+                    <p>Variante: Grigio Siderale</p>
+                </div>
+                <div class="item-qty"><input type="number" value="1" min="1"></div>
+                <div class="item-price">€ 1.450,00</div>
+                <button class="btn-remove"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+
+        <div class="cart-summary">
+            <h3>Riepilogo Ordine</h3>
+            <div class="summary-line"><span>Subtotale</span><span>€ 1.450,00</span></div>
+            <div class="summary-line"><span>Spedizione</span><span>Gratuita</span></div>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #dee2e6;">
+            <div class="summary-line total"><span>Totale</span><span>€ 1.450,00</span></div>
+            <button class="btn-primary checkout-btn" onclick="procediCheckout()">Procedi all'Acquisto <i class="fas fa-lock"></i></button>
+            <div class="secure-payments">
+                <i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-paypal"></i>
+            </div>
+        </div>
+    </div>
+
+    <footer><div class="footer-bottom"><p>© 2026 TechStore.</p></div></footer>
+    <script src="script.js"></script>
+</body>
+</html>
