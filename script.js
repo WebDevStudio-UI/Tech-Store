@@ -1,5 +1,5 @@
 // =================================================================
-// TECHSTORE - DATABASE, CARRELLO, WISHLIST E RECENSIONI DINAMICHE
+// TECHSTORE - LIVE PRODUCTION SCRIPT (WISHLIST, CARRELLO & RECENSIONI)
 // =================================================================
 
 const prodottiDB = {
@@ -12,41 +12,77 @@ const prodottiDB = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Sincronizzazione Badge globali
+    // Sincronizzazione iniziale dei contatori in cima alla pagina
     aggiornaBadgeCarrello();
     aggiornaBadgeWishlist();
 
-    // Filtro Prezzo (Catalogo)
+    // Listener per lo slider del prezzo (Pagina Catalogo)
     const priceRange = document.getElementById('priceRange');
     if (priceRange) {
         priceRange.addEventListener('input', function() {
-            document.getElementById('priceValue').innerText = "Fino a €" + this.value;
-            filtraProdotti();
+            const priceValue = document.getElementById('priceValue');
+            if (priceValue) priceValue.innerText = "Fino a €" + this.value;
+            window.filtraProdotti();
         });
     }
 
-    // Router delle Pagine Dinamiche
+    // Routing automatico in base alla pagina in cui si trova l'utente
     const path = window.location.pathname;
     if (path.includes('carrello.html')) renderizzaCarrello();
     if (path.includes('preferiti.html')) renderizzaWishlist();
     if (path.includes('prodotto.html')) caricaDettagliProdotto();
 });
 
-// --- LOGICA REQUISITO 1: WISHLIST (LISTA DEI DESIDERI) ---
-function ottieniWishlist() {
-    return localStorage.getItem('techstore_wishlist') ? JSON.parse(localStorage.getItem('techstore_wishlist')) : [];
-}
+// --- GESTIONE CORE BADGE & LOCAL STORAGE ---
+function ottieniCarrello() { return localStorage.getItem('techstore_cart') ? JSON.parse(localStorage.getItem('techstore_cart')) : []; }
+function salvaCarrello(carrello) { localStorage.setItem('techstore_cart', JSON.stringify(carrello)); aggiornaBadgeCarrello(); }
+function aggiornaBadgeCarrello() { const badge = document.getElementById('cart-badge'); if (badge) badge.innerText = ottieniCarrello().reduce((tot, item) => tot + item.quantita, 0); }
 
-function salvaWishlist(wishlist) {
-    localStorage.setItem('techstore_wishlist', JSON.stringify(wishlist));
-    aggiornaBadgeWishlist();
-}
+function ottieniWishlist() { return localStorage.getItem('techstore_wishlist') ? JSON.parse(localStorage.getItem('techstore_wishlist')) : []; }
+function salvaWishlist(wishlist) { localStorage.setItem('techstore_wishlist', JSON.stringify(wishlist)); aggiornaBadgeWishlist(); }
+function aggiornaBadgeWishlist() { const badge = document.getElementById('wishlist-badge'); if (badge) badge.innerText = ottieniWishlist().length; }
 
-function aggiornaBadgeWishlist() {
-    const badge = document.getElementById('wishlist-badge');
-    if (badge) badge.innerText = ottieniWishlist().length;
-}
+// --- FUNZIONI AGGANCATE ALL'OGGETTO WINDOW (SICUREZZA PROD) ---
 
+// Aggiunta al carrello da Home / Catalogo passando esplicitamente l'evento click
+window.aggiungiAlCarrello = function(e) {
+    const ev = e || window.event;
+    if (!ev) return;
+    const card = ev.target.closest('.product-card');
+    if (!card) return;
+
+    const nome = card.querySelector('h3').innerText;
+    const prezzoTesto = card.querySelector('.price').innerText;
+    const immagine = card.querySelector('img').src;
+    const prezzo = parseFloat(prezzoTesto.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
+
+    let carrello = ottieniCarrello();
+    const index = carrello.findIndex(item => item.nome === nome);
+    if (index > -1) carrello[index].quantita += 1;
+    else carrello.push({ nome, prezzo, immagine, quantita: 1 });
+
+    salvaCarrello(carrello);
+    alert(`"${nome}" aggiunto al carrello!`);
+};
+
+// Aggiunta quantitativa dalla pagina singola del prodotto
+window.aggiungiProdottoDiretto = function(prodId) {
+    const prodotto = prodottiDB[prodId];
+    if (!prodotto) return;
+    const qtyInput = document.querySelector('.qty-input');
+    const quantita = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+    const prezzo = parseFloat(prodotto.prezzo.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
+
+    let carrello = ottieniCarrello();
+    const index = carrello.findIndex(item => item.nome === prodotto.nome);
+    if (index > -1) carrello[index].quantita += quantita;
+    else carrello.push({ nome: prodotto.nome, prezzo, immagine: prodotto.immagine, quantita });
+
+    salvaCarrello(carrello);
+    alert(`Aggiunto al carrello: x${quantita} "${prodotto.nome}"`);
+};
+
+// Gestione aggiunta/rimozione Lista dei Desideri
 window.aggiungiAiPreferiti = function(prodId) {
     let wishlist = ottieniWishlist();
     if (wishlist.includes(prodId)) {
@@ -55,7 +91,8 @@ window.aggiungiAiPreferiti = function(prodId) {
     }
     wishlist.push(prodId);
     salvaWishlist(wishlist);
-    alert(`"${prodidToName(prodId)}" aggiunto alla Lista dei Desideri! ❤️`);
+    const nomeProd = prodottiDB[prodId]?.nome || prodId;
+    alert(`"${nomeProd}" aggiunto ai preferiti! ❤️`);
 };
 
 window.rimuoviDaiPreferiti = function(prodId) {
@@ -65,74 +102,46 @@ window.rimuoviDaiPreferiti = function(prodId) {
     renderizzaWishlist();
 };
 
-function renderizzaWishlist() {
-    const grid = document.getElementById('wishlist-grid');
-    if (!grid) return;
+// Filtro di ricerca combinato (Catalogo)
+window.filtraProdotti = function() {
+    const prezzoMassimo = parseFloat(document.getElementById('priceRange')?.value || 3000);
+    const checkboxes = document.querySelectorAll('.sidebar-filters input[type="checkbox"]:checked');
+    const categorieSelezionate = Array.from(checkboxes).map(cb => cb.parentElement.innerText.trim().toLowerCase());
+    const schedeProdotto = document.querySelectorAll('.product-grid .product-card');
     
-    const wishlist = ottieniWishlist();
-    if (wishlist.length === 0) {
-        grid.parentNode.innerHTML = `
-            <div class="empty-wishlist">
-                <i class="far fa-heart"></i>
-                <h2>La tua lista è vuota</h2>
-                <p>Sfoglia il catalogo e clicca sul cuore per salvare i tuoi prodotti ideali.</p>
-                <a href="catalogo.html" class="btn-primary" style="display:inline-block; margin-top:1.5rem; padding: 0.7rem 2rem;">Vai al Catalogo</a>
-            </div>`;
-        return;
-    }
-
-    grid.innerHTML = '';
-    wishlist.forEach(id => {
-        const prod = prodottiDB[id];
-        if (!prod) return;
-        grid.innerHTML += `
-            <div class="product-card">
-                <img src="${prod.immagine}" alt="${prod.nome}">
-                <div class="product-info">
-                    <span class="category-tag">${prod.categoria}</span>
-                    <h3>${prod.nome}</h3>
-                    <p class="price">${prod.prezzo}</p>
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        <a href="prodotto.html?id=${prod.id}" class="btn-secondary" style="flex:1; text-align:center;">Dettagli</a>
-                        <button class="btn-remove" onclick="rimuoviDaiPreferiti('${prod.id}')" style="border:1px solid #dee2e6; padding:0 10px; border-radius:5px;"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>`;
+    schedeProdotto.forEach(card => {
+        const prezzo = parseFloat(card.querySelector('.price').innerText.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
+        const categoria = card.querySelector('.category-tag').innerText.trim().toLowerCase();
+        const matchesPrezzo = prezzo <= prezzoMassimo;
+        const matchesCategoria = categorieSelezionate.length === 0 || categorieSelezionate.some(sel => sel.includes(categoria) || categoria.includes(sel));
+        
+        card.style.display = (matchesPrezzo && matchesCategoria) ? 'block' : 'none';
     });
-}
+};
 
-function prodidToName(id) { return prodottiDB[id]?.nome || id; }
+// Gestione Quantità e Rimozione nel Carrello
+window.cambiaQty = function(index, qty) {
+    let carrello = ottieniCarrello();
+    const nuovaQty = parseInt(qty);
+    if (nuovaQty > 0) { carrello[index].quantita = nuovaQty; salvaCarrello(carrello); renderizzaCarrello(); }
+};
 
+window.rimuoviElemento = function(index) {
+    let carrello = ottieniCarrello();
+    carrello.splice(index, 1);
+    salvaCarrello(carrello);
+    renderizzaCarrello();
+};
 
-// --- LOGICA REQUISITO 2: RECENSIONI DINAMICHE ---
-function ottieniRecensioni(prodId) {
-    return localStorage.getItem(`techstore_reviews_${prodId}`) ? JSON.parse(localStorage.getItem(`techstore_reviews_${prodId}`)) : [];
-}
+window.procediCheckout = function() {
+    if (ottieniCarrello().length === 0) { alert("Il carrello è vuoto!"); return; }
+    alert("Reindirizzamento al gateway sicuro...\n\nGrazie per aver testato la demo!");
+    localStorage.removeItem('techstore_cart');
+    window.location.href = 'index.html';
+};
 
-function renderingRecensioni(prodId) {
-    const container = document.getElementById('reviews-container');
-    if (!container) return;
-
-    const reviews = ottieniRecensioni(prodId);
-    if (reviews.length === 0) {
-        container.innerHTML = '<p style="color:#777; font-style:italic;">Nessuna recensione scritta per questo articolo. Sii il primo!</p>';
-        return;
-    }
-
-    container.innerHTML = '';
-    reviews.forEach(rev => {
-        let stelle = '⭐'.repeat(rev.stelle);
-        container.innerHTML += `
-            <div class="review-card">
-                <div class="review-header">
-                    <strong>${rev.autore}</strong>
-                    <span class="review-stars">${stelle}</span>
-                </div>
-                <p style="color:#555; font-size:0.95rem;">${rev.testo}</p>
-                <small style="color:#999; display:block; margin-top:5px;">Inviata il: ${rev.data}</small>
-            </div>`;
-    });
-}
+// Gestione Recensioni Utente della pagina Prodotto
+window.ottieniRecensioni = function(prodId) { return localStorage.getItem(`techstore_reviews_${prodId}`) ? JSON.parse(localStorage.getItem(`techstore_reviews_${prodId}`)) : []; };
 
 window.aggiungiRecensioneDinamica = function(event) {
     event.preventDefault();
@@ -144,19 +153,16 @@ window.aggiungiRecensioneDinamica = function(event) {
     const testo = document.getElementById('rev-text').value;
     const data = new Date().toLocaleDateString('it-IT');
 
-    let recensioni = ottieniRecensioni(prodId);
-    recensioni.unshift({ autore, stelle, testo, data }); // Inserisce in cima
+    let recensioni = window.ottieniRecensioni(prodId);
+    recensioni.unshift({ autore, stelle, testo, data });
     
     localStorage.setItem(`techstore_reviews_${prodId}`, JSON.stringify(recensioni));
-    
-    // Reset del form e re-render
     document.getElementById('formRecensione').reset();
     renderingRecensioni(prodId);
-    alert("Recensione pubblicata sul browser!");
+    alert("Recensione pubblicata!");
 };
 
-
-// --- VECCHIE LOGICHE CATALOGO & CARRELLO (CONSOLIDATE) ---
+// --- FUNZIONI DI INTERFACCIA INTERNE (RENDER HTML) ---
 function caricaDettagliProdotto() {
     const params = new URLSearchParams(window.location.search);
     const prodId = params.get('id');
@@ -174,112 +180,53 @@ function caricaDettagliProdotto() {
     document.querySelector('.product-details .huge-price').innerText = prodotto.prezzo;
     document.querySelector('.product-details .description').innerText = prodotto.descrizione;
 
-    let stelleHTML = '<i>⭐</i>'.repeat(prodotto.stelle);
-    document.querySelector('.product-details .rating').innerHTML = stelleHTML + " " + prodotto.recensioni;
+    let stelleHTML = '⭐'.repeat(prodotto.stelle);
+    document.querySelector('.product-details .rating').innerHTML = `<span style="color:#ffc107;">${stelleHTML}</span> ` + prodotto.recensioni + " recensioni";
     
-    document.querySelector('.add-to-cart-large').setAttribute('onclick', `aggiungiProdottoDiretto('${prodId}')`);
-    document.getElementById('main-wishlist-btn').setAttribute('onclick', `aggiungiAiPreferiti('${prodId}')`);
+    document.querySelector('.add-to-cart-large').setAttribute('onclick', `window.aggiungiProdottoDiretto('${prodId}')`);
+    document.getElementById('main-wishlist-btn').setAttribute('onclick', `window.aggiungiAiPreferiti('${prodId}')`);
 
-    // Carica le recensioni associate
     renderingRecensioni(prodId);
 }
 
-function filtraProdotti() {
-    const prezzoMassimo = parseFloat(document.getElementById('priceRange')?.value || 3000);
-    const checkboxes = document.querySelectorAll('.sidebar-filters input[type="checkbox"]:checked');
-    const categorieSelezionate = Array.from(checkboxes).map(cb => cb.parentElement.innerText.trim().toLowerCase());
-    const schedeProdotto = document.querySelectorAll('.product-grid .product-card');
-    
-    schedeProdotto.forEach(card => {
-        const prezzo = parseFloat(card.querySelector('.price').innerText.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
-        const categoria = card.querySelector('.category-tag').innerText.trim().toLowerCase();
-        const matchesPrezzo = prezzo <= prezzoMassimo;
-        const matchesCategoria = categorieSelezionate.length === 0 || categorieSelezionate.some(sel => sel.includes(categoria) || categoria.includes(sel));
-        
-        card.style.display = (matchesPrezzo && matchesCategoria) ? 'block' : 'none';
+function renderingRecensioni(prodId) {
+    const container = document.getElementById('reviews-container');
+    if (!container) return;
+    const reviews = window.ottieniRecensioni(prodId);
+    if (reviews.length === 0) { container.innerHTML = '<p style="color:#777; font-style:italic;">Nessuna recensione scritta per questo articolo. Sii il primo!</p>'; return; }
+    container.innerHTML = '';
+    reviews.forEach(rev => {
+        container.innerHTML += `<div class="review-card"><div class="review-header"><strong>${rev.autore}</strong><span class="review-stars">${'⭐'.repeat(rev.stelle)}</span></div><p style="color:#555; font-size:0.95rem;">${rev.testo}</p><small style="color:#999; display:block; margin-top:5px;">Inviata il: ${rev.data}</small></div>`;
     });
 }
-
-function ottieniCarrello() { return localStorage.getItem('techstore_cart') ? JSON.parse(localStorage.getItem('techstore_cart')) : []; }
-function salvaCarrello(carrello) { localStorage.setItem('techstore_cart', JSON.stringify(carrello)); aggiornaBadgeCarrello(); }
-function aggiornaBadgeCarrello() { const badge = document.getElementById('cart-badge'); if (badge) badge.innerText = ottieniCarrello().reduce((tot, item) => tot + item.quantita, 0); }
-
-function aggiungiAlCarrello() {
-    const evento = window.event;
-    if (!evento) return;
-    const card = evento.target.closest('.product-card');
-    if (!card) return;
-
-    const nome = card.querySelector('h3').innerText;
-    const prezzoTesto = card.querySelector('.price').innerText;
-    const immagine = card.querySelector('img').src;
-    const prezzo = parseFloat(prezzoTesto.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
-
-    let carrello = ottieniCarrello();
-    const index = carrello.findIndex(item => item.nome === nome);
-    if (index > -1) carrello[index].quantita += 1;
-    else carrello.push({ nome, prezzo, immagine, quantita: 1 });
-
-    salvaCarrello(carrello);
-    alert(`"${nome}" aggiunto al carrello!`);
-}
-
-window.aggiungiProdottoDiretto = function(prodId) {
-    const prodotto = prodottiDB[prodId];
-    if (!prodotto) return;
-    const qtyInput = document.querySelector('.qty-input');
-    const quantita = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
-    const prezzo = parseFloat(prodotto.prezzo.replace('€', '').replace(/\./g, '').replace(',', '.').trim());
-
-    let carrello = ottieniCarrello();
-    const index = carrello.findIndex(item => item.nome === prodotto.nome);
-    if (index > -1) carrello[index].quantita += quantita;
-    else carrello.push({ nome: prodotto.nome, prezzo, immagine: prodotto.immagine, quantita });
-
-    salvaCarrello(carrello);
-    alert(`Aggiunto al carrello: x${quantita} "${prodotto.nome}"`);
-};
 
 function renderizzaCarrello() {
     const container = document.querySelector('.cart-items');
     if (!container) return;
     const carrello = ottieniCarrello();
     container.innerHTML = '<h2>Il tuo Carrello</h2>';
-
-    if (carrello.length === 0) {
-        container.innerHTML += '<p style="padding: 20px 0; color: #666;">Il tuo carrello è attualmente vuoto.</p>';
-        aggiornaPrezziRiepilogo(0);
-        return;
-    }
-
+    if (carrello.length === 0) { container.innerHTML += '<p style="padding: 20px 0; color: #666;">Il tuo carrello è attualmente vuoto.</p>'; aggiornaPrezziRiepilogo(0); return; }
     let subtotale = 0;
     carrello.forEach((item, index) => {
         const totaleRiga = item.prezzo * item.quantita;
         subtotale += totaleRiga;
-        container.innerHTML += `
-            <div class="cart-item">
-                <img src="${item.immagine}" alt="${item.nome}">
-                <div class="item-details"><h3>${item.nome}</h3></div>
-                <div class="item-qty"><input type="number" value="${item.quantita}" min="1" onchange="cambiaQty(${index}, this.value)"></div>
-                <div class="item-price">€ ${totaleRiga.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
-                <button class="btn-remove" onclick="rimuoviElemento(${index})"><i class="fas fa-trash"></i></button>
-            </div>`;
+        container.innerHTML += `<div class="cart-item"><img src="${item.immagine}" alt="${item.nome}"><div class="item-details"><h3>${item.nome}</h3></div><div class="item-qty"><input type="number" value="${item.quantita}" min="1" onchange="window.cambiaQty(${index}, this.value)"></div><div class="item-price">€ ${totaleRiga.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div><button class="btn-remove" onclick="window.rimuoviElemento(${index})"><i class="fas fa-trash"></i></button></div>`;
     });
     aggiornaPrezziRiepilogo(subtotale);
 }
 
-window.cambiaQty = function(index, qty) {
-    let carrello = ottieniCarrello();
-    const nuovaQty = parseInt(qty);
-    if (nuovaQty > 0) { carrello[index].quantita = nuovaQty; salvaCarrello(carrello); renderizzaCarrello(); }
-};
-
-window.rimuoviElemento = function(index) {
-    let carrello = ottieniCarrello();
-    carrello.splice(index, 1);
-    salvaCarrello(carrello);
-    renderizzaCarrello();
-};
+function renderizzaWishlist() {
+    const grid = document.getElementById('wishlist-grid');
+    if (!grid) return;
+    const wishlist = ottieniWishlist();
+    if (wishlist.length === 0) { grid.parentNode.innerHTML = `<div class="empty-wishlist"><i class="far fa-heart"></i><h2>La tua lista è vuota</h2><p>Sfoglia il catalogo e clicca sul cuore per salvare i tuoi prodotti ideali.</p><a href="catalogo.html" class="btn-primary" style="display:inline-block; margin-top:1.5rem; padding: 0.7rem 2rem;">Vai al Catalogo</a></div>`; return; }
+    grid.innerHTML = '';
+    wishlist.forEach(id => {
+        const prod = prodottiDB[id];
+        if (!prod) return;
+        grid.innerHTML += `<div class="product-card"><img src="${prod.immagine}" alt="${prod.nome}"><div class="product-info"><span class="category-tag">${prod.categoria}</span><h3>${prod.nome}</h3><p class="price">${prod.prezzo}</p><div style="display:flex; gap:10px; margin-top:10px;"><a href="prodotto.html?id=${prod.id}" class="btn-secondary" style="flex:1; text-align:center;">Dettagli</a><button class="btn-remove" onclick="window.rimuoviDaiPreferiti('${prod.id}')" style="border:1px solid #dee2e6; padding:0 10px; border-radius:5px; background:none; cursor:pointer; color:#dc3545;"><i class="fas fa-trash"></i></button></div></div></div>`;
+    });
+}
 
 function aggiornaPrezziRiepilogo(subtotale) {
     const summaryLines = document.querySelectorAll('.summary-line span:last-child');
@@ -288,10 +235,3 @@ function aggiornaPrezziRiepilogo(subtotale) {
     if (summaryLines.length >= 2) { summaryLines[0].innerText = strSubtotale; summaryLines[1].innerText = subtotale > 0 ? "Gratuita" : "€ 0,00"; }
     if (totalLine) totalLine.innerText = strSubtotale;
 }
-
-window.procediCheckout = function() {
-    if (ottieniCarrello().length === 0) { alert("Il carrello è vuoto!"); return; }
-    alert("Reindirizzamento al gateway sicuro...\n\nGrazie per aver testato la demo!");
-    localStorage.removeItem('techstore_cart');
-    window.location.href = 'index.html';
-};
