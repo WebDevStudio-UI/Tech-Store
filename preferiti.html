@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista dei Desideri | TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .wishlist-container { max-width: 1200px; margin: 3rem auto; padding: 0 2rem; }
+        .wishlist-header { margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
+        .empty-wishlist { text-align: center; padding: 4rem 2rem; color: #666; }
+        .empty-wishlist i { font-size: 4rem; color: #ccc; margin-bottom: 1.5rem; }
+        
+        /* Stile specifico per badge wishlist nell'header */
+        .wishlist-icon { position: relative; margin-right: 15px; font-size: 1.3rem; color: #333; transition: 0.3s; }
+        .wishlist-icon:hover { color: #dc3545; }
+        .wishlist-icon .badge { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><h2><i class="fas fa-microchip"></i> TechStore</h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalogo.html">Catalogo</a></li>
+                <li><a href="contatti.html">Contatti</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="preferiti.html" class="wishlist-icon" style="color: #dc3545;"><i class="fas fa-heart"></i><span id="wishlist-badge" class="badge">0</span></a>
+            <a href="carrello.html" class="cart-icon"><i class="fas fa-shopping-cart"></i><span id="cart-badge" class="badge">0</span></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="wishlist-container">
+            <div class="wishlist-header">
+                <h1>La tua Lista dei Desideri <i class="fas fa-heart" style="color: #dc3545;"></i></h1>
+                <p>I prodotti che hai salvato per un secondo momento.</p>
+            </div>
+            
+            <div id="wishlist-grid" class="wishlist-grid">
+                <!-- I prodotti preferiti verranno inseriti qui dinamicamente da JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer><div class="footer-bottom"><p>© 2026 E*R.Tutti i diritti riservati.</p></div></footer>
+    <script src="script.js"></script>
+</body>
+</html>
