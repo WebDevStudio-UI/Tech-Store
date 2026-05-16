@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offerte | TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================
+           HERO OFFERTE
+        ============================ */
+        .hero-offerte {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 60px 5% 50px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-offerte::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 60% 40%, rgba(13,110,253,0.15) 0%, transparent 60%),
+                        radial-gradient(circle at 20% 70%, rgba(220,53,69,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-offerte .badge-flash {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 50px;
+            margin-bottom: 18px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220,53,69,0.4); }
+            50%       { transform: scale(1.04); box-shadow: 0 0 0 8px rgba(220,53,69,0); }
+        }
+        .hero-offerte h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+        .hero-offerte h1 span { color: #ffc107; }
+        .hero-offerte p {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.1rem;
+            margin-bottom: 35px;
+        }
+
+        /* ============================
+           COUNTDOWN
+        ============================ */
+        .countdown-wrapper {
+            display: inline-flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 18px 30px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+        .countdown-wrapper .cd-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+        .cd-unit {
+            text-align: center;
+        }
+        .cd-unit .cd-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            background: rgba(13,110,253,0.3);
+            border: 1px solid rgba(13,110,253,0.4);
+            border-radius: 8px;
+            min-width: 58px;
+            padding: 8px 12px;
+            display: block;
+            line-height: 1;
+        }
+        .cd-unit .cd-text {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 5px;
+            display: block;
+        }
+        .cd-sep {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.3);
+            margin: 0 2px;
+            align-self: flex-start;
+            padding-top: 6px;
+        }
+
+        /* ============================
+           SEZIONE OFFERTE
+        ============================ */
+        .offerte-section {
+            padding: 3rem 5%;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i { color: var(--primary); }
+
+        /* ============================
+           OFFERTA DEL GIORNO (featured)
+        ============================ */
+        .deal-of-day {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            margin-bottom: 3rem;
+            border: 2px solid rgba(13,110,253,0.15);
+        }
+        .deal-of-day .deal-img {
+            flex: 1;
+            min-width: 280px;
+            max-width: 420px;
+            background: linear-gradient(135deg, #f0f4ff, #e8f0ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+        }
+        .deal-of-day .deal-img img {
+            width: 100%;
+            max-width: 320px;
+            height: 260px;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+        .deal-of-day:hover .deal-img img { transform: scale(1.04); }
+        .deal-of-day .deal-info {
+            flex: 1;
+            min-width: 280px;
+            padding: 2.5rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .badge-sconto {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 50px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .deal-info h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        .deal-info .deal-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.98rem;
+        }
+        .deal-prices {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .deal-prices .old-price {
+            font-size: 1.2rem;
+            color: #aaa;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+        .deal-prices .new-price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #dc3545;
+        }
+        .deal-prices .risparmio {
+            font-size: 0.85rem;
+            background: #fff3cd;
+            color: #856404;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        .stock-bar-wrapper {
+            margin-bottom: 22px;
+        }
+        .stock-bar-wrapper p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .stock-bar-wrapper p span { font-weight: 700; color: var(--text-dark); }
+        .stock-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 50px;
+            overflow: hidden;
+        }
+        .stock-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+            border-radius: 50px;
+            transition: width 1s ease;
+        }
+        .deal-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* ============================
+           GRIGLIA OFFERTE SECONDARIE
+        ============================ */
+        .offerte-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .offerta-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+        .offerta-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        .offerta-card .badge-sconto-card {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #dc3545;
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+            z-index: 1;
+        }
+        .offerta-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: linear-gradient(135deg, #f8f9fa, #f0f4ff);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .offerta-card:hover img { transform: scale(1.05); }
+        .offerta-card .card-body {
+            padding: 1.2rem 1.5rem 1.5rem;
+        }
+        .offerta-card .card-body .category-tag {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .offerta-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 8px 0 6px;
+            color: var(--text-dark);
+        }
+        .offerta-card .card-prices {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .offerta-card .card-prices .old { color: #aaa; text-decoration: line-through; font-size: 0.9rem; }
+        .offerta-card .card-prices .new { color: #dc3545; font-weight: 700; font-size: 1.25rem; }
+        .offerta-card .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .offerta-card .card-actions a { flex: 1; text-align: center; }
+        .offerta-card .card-actions .btn-add {
+            width: 40px; height: 40px; flex-shrink: 0;
+        }
+
+        /* ============================
+           BANNER EXTRA
+        ============================ */
+        .promo-banners {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 0 5% 3rem;
+        }
+        .promo-banner {
+            border-radius: 14px;
+            padding: 2rem 2.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+        .promo-banner::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+        .promo-banner.blue  { background: linear-gradient(135deg, #0d6efd, #0dcaf0); }
+        .promo-banner.dark  { background: linear-gradient(135deg, #212529, #495057); }
+        .promo-banner .pb-text h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+        .promo-banner .pb-text p  { font-size: 0.88rem; opacity: 0.85; }
+        .promo-banner .pb-icon i  { font-size: 2.8rem; opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo"><h2><i class="fas fa-microchip"></i> TechStore</h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalogo.html">Catalogo</a></li>
+                <li><a href="offerte.html" class="active">Offerte</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="carrello.html" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-badge" class="badge">0</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO CON COUNTDOWN -->
+    <section class="hero-offerte">
+        <div class="badge-flash"><i class="fas fa-bolt"></i> &nbsp;Flash Sale Attiva</div>
+        <h1>Le Migliori <span>Offerte</span> Tech</h1>
+        <p>Prezzi ribassati solo per un periodo limitato. Approfitta prima che finisca!</p>
+        <div class="countdown-wrapper">
+            <span class="cd-label"><i class="fas fa-clock"></i> &nbsp;Scade tra</span>
+            <div class="cd-unit"><span class="cd-num" id="cd-ore">00</span><span class="cd-text">ore</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" id="cd-min">00</span><span class="cd-text">min</span></div>
+            <span class="cd-sep">:</span>
+            <div class="cd-unit"><span class="cd-num" id="cd-sec">00</span><span class="cd-text">sec</span></div>
+        </div>
+    </section>
+
+    <!-- OFFERTA DEL GIORNO -->
+    <section class="offerte-section">
+        <div class="section-title">
+            <i class="fas fa-fire"></i> Offerta del Giorno
+        </div>
+
+        <div class="deal-of-day">
+            <div class="deal-img">
+                <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=800&auto=format&fit=crop" alt="UltraBook M2">
+            </div>
+            <div class="deal-info">
+                <span class="badge-sconto">— 18% &nbsp;<i class="fas fa-tag"></i></span>
+                <h2>UltraBook 15" M2 – 512GB SSD</h2>
+                <p class="deal-desc">Il notebook professionale più venduto della stagione. Processore ultra-veloce, display Retina e batteria da 20 ore. Solo oggi a prezzo eccezionale.</p>
+                <div class="deal-prices">
+                    <span class="old-price">€ 1.769,00</span>
+                    <span class="new-price">€ 1.450,00</span>
+                    <span class="risparmio">Risparmi € 319</span>
+                </div>
+                <div class="stock-bar-wrapper">
+                    <p>Disponibilità: <span>solo 7 rimasti</span></p>
+                    <div class="stock-bar"><div class="stock-bar-fill" style="width: 65%;"></div></div>
+                </div>
+                <div class="deal-actions">
+                    <button class="btn-primary" onclick="aggiungiAlCarrello()">
+                        <i class="fas fa-cart-plus"></i> Aggiungi al Carrello
+                    </button>
+                    <a href="prodotto-laptop.html" class="btn-secondary">Dettagli</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRIGLIA OFFERTE -->
+        <div class="section-title"><i class="fas fa-percent"></i> Tutte le Promozioni</div>
+        <div class="offerte-grid">
+
+            <div class="offerta-card">
+                <span class="badge-sconto-card">−22%</span>
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop" alt="Smartphone">
+                <div class="card-body">
+                    <span class="category-tag">Smartphone</span>
+                    <h3>Phone Pro Max 256GB</h3>
+                    <div class="card-prices">
+                        <span class="old">€ 1.539,00</span>
+                        <span class="new">€ 1.199,00</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offerta-card">
+                <span class="badge-sconto-card">−38%</span>
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop" alt="Cuffie">
+                <div class="card-body">
+                    <span class="category-tag">Audio</span>
+                    <h3>Cuffie Noise Cancelling Pro</h3>
+                    <div class="card-prices">
+                        <span class="old">€ 399,00</span>
+                        <span class="new">€ 249,99</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="prodotto-cuffie.html" class="btn-secondary">Dettagli</a>
+                        <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offerta-card">
+                <span class="badge-sconto-card">−15%</span>
+                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=800&auto=format&fit=crop" alt="Smartwatch">
+                <div class="card-body">
+                    <span class="category-tag">Smartwatch</span>
+                    <h3>Watch Series 8</h3>
+                    <div class="card-prices">
+                        <span class="old">€ 589,00</span>
+                        <span class="new">€ 499,00</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offerta-card">
+                <span class="badge-sconto-card">−20%</span>
+                <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?q=80&w=800&auto=format&fit=crop" alt="Tablet">
+                <div class="card-body">
+                    <span class="category-tag">Tablet</span>
+                    <h3>Pad Air 10.9"</h3>
+                    <div class="card-prices">
+                        <span class="old">€ 879,00</span>
+                        <span class="new">€ 699,00</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BANNER PROMOZIONI EXTRA -->
+    <div class="promo-banners">
+        <div class="promo-banner blue">
+            <div class="pb-text">
+                <h3>Spedizione Gratuita</h3>
+                <p>Su tutti gli ordini sopra €99. Consegna in 24/48h.</p>
+            </div>
+            <div class="pb-icon"><i class="fas fa-truck"></i></div>
+        </div>
+        <div class="promo-banner dark">
+            <div class="pb-text">
+                <h3>Reso Gratuito</h3>
+                <p>30 giorni per cambiare idea, senza domande.</p>
+            </div>
+            <div class="pb-icon"><i class="fas fa-undo"></i></div>
+        </div>
+    </div>
+
+    <footer><div class="footer-bottom"><p>© 2026 TechStore. Tutti i diritti riservati.</p></div></footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Countdown: scade a mezzanotte
+        function aggiornaCountdown() {
+            const ora = new Date();
+            const mezzanotte = new Date();
+            mezzanotte.setHours(23, 59, 59, 999);
+            let diff = mezzanotte - ora;
+            if (diff < 0) diff = 0;
+
+            const ore = Math.floor(diff / (1000 * 60 * 60));
+            const min = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const sec = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('cd-ore').innerText = String(ore).padStart(2, '0');
+            document.getElementById('cd-min').innerText = String(min).padStart(2, '0');
+            document.getElementById('cd-sec').innerText = String(sec).padStart(2, '0');
+        }
+
+        aggiornaCountdown();
+        setInterval(aggiornaCountdown, 1000);
+
+        // Animazione barra stock al caricamento
+        window.addEventListener('load', () => {
+            const fill = document.querySelector('.stock-bar-fill');
+            if (fill) { fill.style.width = '0'; setTimeout(() => fill.style.width = '65%', 200); }
+        });
+    </script>
+</body>
+</html>
