@@ -1,5 +1,5 @@
 // ==========================================================
-// TECHSTORE - DATABASE PRODOTTI E LOGICA EVOLUTA
+// TECHSTORE - DATABASE PRODOTTI E LOGICA EVOLUTA (CORRETTO)
 // ==========================================================
 
 const prodottiDB = {
@@ -126,8 +126,10 @@ function caricaDettagliProdotto() {
     }
 
     document.title = `${prodotto.nome} | TechStore`;
-    document.querySelector('.product-gallery .main-img').src = producto.immagine;
-    document.querySelector('.product-gallery .main-img').alt = producto.nome;
+    
+    // FISSAZIONE DEL BUG: cambiato "producto" con "prodotto"
+    document.querySelector('.product-gallery .main-img').src = prodotto.immagine;
+    document.querySelector('.product-gallery .main-img').alt = prodotto.nome;
     document.querySelector('.product-details .category-tag').innerText = prodotto.categoria;
     document.querySelector('.product-details h1').innerText = prodotto.nome;
     document.querySelector('.product-details .huge-price').innerText = prodotto.prezzo;
@@ -239,53 +241,4 @@ function renderizzaCarrello() {
                     <h3>${item.nome}</h3>
                 </div>
                 <div class="item-qty">
-                    <input type="number" value="${item.quantita}" min="1" onchange="cambiaQty(${index}, this.value)">
-                </div>
-                <div class="item-price">€ ${totaleRiga.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
-                <button class="btn-remove" onclick="rimuoviElemento(${index})"><i class="fas fa-trash"></i></button>
-            </div>
-        `;
-    });
-
-    aggiornaPrezziRiepilogo(subtotale);
-}
-
-window.cambiaQty = function(index, qty) {
-    let carrello = ottieniCarrello();
-    const nuovaQty = parseInt(qty);
-    if (nuovaQty > 0) {
-        carrello[index].quantita = nuovaQty;
-        salvaCarrello(carrello);
-        renderizzaCarrello();
-    }
-};
-
-window.rimuoviElemento = function(index) {
-    let carrello = ottieniCarrello();
-    carrello.splice(index, 1);
-    salvaCarrello(carrello);
-    renderizzaCarrello();
-};
-
-function aggiornaPrezziRiepilogo(subtotale) {
-    const summaryLines = document.querySelectorAll('.summary-line span:last-child');
-    const totalLine = document.querySelector('.summary-line.total span:last-child');
-    const strSubtotale = `€ ${subtotale.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`;
-
-    if (summaryLines.length >= 2) {
-        summaryLines[0].innerText = strSubtotale;
-        summaryLines[1].innerText = subtotale > 0 ? "Gratuita" : "€ 0,00";
-    }
-    if (totalLine) totalLine.innerText = strSubtotale;
-}
-
-window.procediCheckout = function() {
-    const carrello = ottieniCarrello();
-    if (carrello.length === 0) {
-        alert("Il carrello è vuoto!");
-        return;
-    }
-    alert("Reindirizzamento al gateway di pagamento sicuro (Stripe/PayPal)... \n\nGrazie per aver testato la demo!");
-    localStorage.removeItem('techstore_cart');
-    window.location.href = 'index.html';
-};
+                    <input type="
