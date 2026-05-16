@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatti & Assistenza | TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .contact-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+            display: block;
+        }
+        .contact-grid-layout {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 3rem;
+        }
+        .contact-column {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 0 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .contact-column {
+                display: block;
+                width: 100%;
+                padding: 0;
+                margin-bottom: 2rem;
+            }
+        }
+        .contact-info h1 {
+            font-size: 2.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+        .contact-info p.subtitle {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+        }
+        .info-details {
+            margin-top: 2rem;
+        }
+        .info-item {
+            display: block;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .info-item-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.5rem;
+        }
+        .info-item i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        .info-item h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .info-item p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #666;
+            padding-left: 30px;
+            line-height: 1.4;
+        }
+        .contact-form-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        .contact-form-box h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #444;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background-color: #fafafa;
+            transition: all 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+        .faq-section {
+            background: white;
+            padding: 4rem 5%;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+        }
+        .faq-container {
+            max-width: 850px;
+            margin: 2.5rem auto 0 auto;
+        }
+        .faq-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .faq-item {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--bg-light);
+        }
+        .faq-item:hover {
+            border-color: var(--primary);
+            background-color: #fff;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease;
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .faq-item.active {
+            background-color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.03);
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border);
+            padding-top: 0.8rem;
+        }
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+        .faq-question i {
+            transition: transform 0.3s;
+            color: #888;
+        }
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><h2><i class="fas fa-microchip"></i> TechStore</h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalogo.html">Catalogo</a></li>
+                <li><a href="contatti.html" class="active">Contatti</a></li>
+            </ul>
+        </nav>
+        <div class="header-actions">
+            <a href="carrello.html" class="cart-icon"><i class="fas fa-shopping-cart"></i><span id="cart-badge" class="badge">0</span></a>
+        </div>
+    </header>
+
+    <main>
+        <div class="contact-container">
+            <div class="contact-grid-layout">
+                <!-- Colonna Info Sinistra -->
+                <div class="contact-column contact-info">
+                    <h1>Parla con i nostri Esperti</h1>
+                    <p class="subtitle">Hai domande sulle specifiche tecniche di un prodotto, tracciamento di un ordine o hai bisogno di supporto post-vendita? Il team TechStore è a tua completa disposizione.</p>
+                    
+                    <div class="info-details">
+                        <div class="info-item">
+                            <div class="info-item-header">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <h4>Sede Operativa</h4>
+                            </div>
+                            <p>Via dell'Innovazione 42, Edificio B<br>20100 Milano (MI), Italia</p>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-header">
+                                <i class="fas fa-phone-alt"></i>
+                                <h4>Servizio Clienti Telefoniche</h4>
+                            </div>
+                            <p>+39 02 1234567<br><span style="font-size:0.85rem; color:#888;">Lun - Ven, ore 09:00 - 18:00</span></p>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-header">
+                                <i class="fas fa-envelope"></i>
+                                <h4>Supporto Scritto</h4>
+                            </div>
+                            <p>supporto@techstore-webdev.it<br><span style="font-size:0.85rem; color:#888;">Risposta garantita entro 24 ore</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonna Form Destra -->
+                <div class="contact-column">
+                    <div class="contact-form-box">
+                        <h3>Invia un Messaggio</h3>
+                        <form id="contactForm" onsubmit="inviaMessaggio(event)">
+                            <div class="form-group">
+                                <label for="name">Nome Completo</label>
+                                <input type="text" id="name" required placeholder="Es. Mario Rossi">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Indirizzo Email</label>
+                                <input type="email" id="email" required placeholder="Es. mario.rossi@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Oggetto della Richiesta</label>
+                                <input type="text" id="subject" required placeholder="Es. Info spedizione ordine #1024">
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Messaggio</label>
+                                <textarea id="message" rows="5" required placeholder="Descrivi qui la tua richiesta in dettaglio..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-submit">Invia Messaggio <i class="fas fa-paper-plane" style="margin-left:5px;"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione FAQ Accordion -->
+        <section class="faq-section">
+            <h2 class="faq-title">Domande Frequenti (FAQ)</h2>
+            <p style="text-align: center; color: #666; max-width: 600px; margin: 0 auto 2rem auto;">Trova risposte immediate ai dubbi più comuni senza attendere i tempi di gestione.</p>
+            
+            <div class="faq-container">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Quali sono i tempi e i costi di spedizione?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        La spedizione è espressa e gratuita in tutta Italia per ordini superiori a € 49,00. Per importi inferiori, il costo fisso è di € 5,90. La consegna avviene normalmente in 24/48 ore lavorative dal momento dell'evasione.
+                    </div>
+                </div>
+                
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>Come funziona la procedura di reso?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Puoi richiedere il reso gratuito entro 14 giorni dalla data di consegna del pacco. È sufficiente compilare la richiesta nell'area personale o contattarci via form per ricevere l'etichetta di spedizione prepagata del corriere.
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        <span>I prodotti acquistati sono coperti da garanzia?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Sì, tutti i prodotti venduti su TechStore sono al 100% originali e coperti dalla Garanzia Legale di Conformità della durata di 24 mesi per i clienti privati, valida a livello nazionale.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: #fff; padding: 2rem 0; text-align: center; border-top: 1px solid var(--border); margin-top: 4rem;">
+        <p style="color: #666; font-size: 0.9rem;">© 2026 E*R.Tutti i diritti riservati.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+        function inviaMessaggio(event) {
+            event.preventDefault();
+            const nome = document.getElementById('name').value;
+            alert(`Grazie ${nome}! Il tuo messaggio è stato preso in carico con successo. Ti risponderemo all'indirizzo email inserito entro 24 ore lavorative.`);
+            document.getElementById('contactForm').reset();
+        }
+    </script>
+</body>
+</html>
