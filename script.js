@@ -1,6 +1,3 @@
-// =============================================
-// GESTIONE CARRELLO
-// =============================================
 let cartCount = 0;
 
 function aggiungiAlCarrello() {
@@ -18,12 +15,8 @@ function procediCheckout() {
     alert("Reindirizzamento al gateway di pagamento sicuro (Stripe/PayPal)...\n\n[Nota: Essendo una demo per il portfolio, il processo termina qui.]");
 }
 
-// =============================================
-// FILTRI CATALOGO
-// =============================================
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- Slider prezzo ---
     const priceRange = document.getElementById('priceRange');
     const priceValue = document.getElementById('priceValue');
 
@@ -34,19 +27,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Checkbox categorie ---
     const checkboxes = document.querySelectorAll('.filter-cat');
     checkboxes.forEach(cb => {
         cb.addEventListener('change', applicaFiltri);
     });
 
-    // --- Ordinamento ---
     const sortSelect = document.getElementById('sortSelect');
     if (sortSelect) {
         sortSelect.addEventListener('change', applicaFiltri);
     }
 
-    // --- Reset ---
     const resetBtn = document.getElementById('resetFilters');
     if (resetBtn) {
         resetBtn.addEventListener('click', function () {
@@ -60,30 +50,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Funzione principale filtri ---
     function applicaFiltri() {
         const grid = document.getElementById('productGrid');
         const noResults = document.getElementById('noResults');
         if (!grid) return;
 
-        // Categorie selezionate
         const selezionate = Array.from(document.querySelectorAll('.filter-cat:checked')).map(cb => cb.value);
-
-        // Prezzo massimo
         const maxPrezzo = priceRange ? parseInt(priceRange.value) : 9999;
-
-        // Ordinamento
         const sort = sortSelect ? sortSelect.value : 'default';
 
-        // Recupera tutte le card
         const cards = Array.from(grid.querySelectorAll('.product-card'));
-
-        // Filtra: mostra/nascondi
         let visibili = 0;
+
         cards.forEach(card => {
             const categoria = card.getAttribute('data-category');
             const prezzo = parseInt(card.getAttribute('data-price'));
-
             const passaCategoria = selezionate.length === 0 || selezionate.includes(categoria);
             const passaPrezzo = prezzo <= maxPrezzo;
 
@@ -95,12 +76,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Messaggio nessun risultato
         if (noResults) {
             noResults.style.display = visibili === 0 ? 'block' : 'none';
         }
 
-        // Ordinamento (riordina solo le card visibili)
         if (sort !== 'default') {
             const cardsVisibili = cards.filter(c => c.style.display !== 'none');
             cardsVisibili.sort((a, b) => {
