@@ -29,10 +29,11 @@
             <div class="filter-group">
                 <h4>Categorie</h4>
                 <ul>
-                    <li><input type="checkbox"> Smartphone</li>
-                    <li><input type="checkbox"> Computer</li>
-                    <li><input type="checkbox"> Audio & TV</li>
-                    <li><input type="checkbox"> Smartwatch</li>
+                    <li><input type="checkbox" onchange="filtraProdotti()"> Smartphone</li>
+                    <li><input type="checkbox" onchange="filtraProdotti()"> Computer</li>
+                    <li><input type="checkbox" onchange="filtraProdotti()"> Audio</li>
+                    <li><input type="checkbox" onchange="filtraProdotti()"> Smartwatch</li>
+                    <li><input type="checkbox" onchange="filtraProdotti()"> Tablet</li>
                 </ul>
             </div>
             <div class="filter-group">
@@ -45,11 +46,6 @@
         <main class="shop-main">
             <div class="shop-header">
                 <h2>Tutti i Prodotti</h2>
-                <select>
-                    <option>Ordina per: Più Rilevanti</option>
-                    <option>Prezzo: Crescente</option>
-                    <option>Prezzo: Decrescente</option>
-                </select>
             </div>
             
             <div class="product-grid">
@@ -59,7 +55,7 @@
                         <span class="category-tag">Smartphone</span>
                         <h3>Phone Pro Max 256GB</h3>
                         <p class="price">€ 1.199,00</p>
-                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=smartphone" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
@@ -69,7 +65,7 @@
                         <span class="category-tag">Computer</span>
                         <h3>UltraBook 15" M2</h3>
                         <p class="price">€ 1.450,00</p>
-                        <a href="prodotto-laptop.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=laptop" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
@@ -79,7 +75,7 @@
                         <span class="category-tag">Audio</span>
                         <h3>Cuffie Noise Cancelling</h3>
                         <p class="price">€ 249,99</p>
-                        <a href="prodotto-laptop.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=cuffie" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
@@ -89,7 +85,7 @@
                         <span class="category-tag">Smartwatch</span>
                         <h3>Watch Series 8</h3>
                         <p class="price">€ 499,00</p>
-                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=watch" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
@@ -99,7 +95,7 @@
                         <span class="category-tag">Computer</span>
                         <h3>PC Desktop Gaming X</h3>
                         <p class="price">€ 1.850,00</p>
-                        <a href="prodotto-laptop.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=pc-gaming" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
@@ -109,7 +105,7 @@
                         <span class="category-tag">Tablet</span>
                         <h3>Pad Air 10.9"</h3>
                         <p class="price">€ 699,00</p>
-                        <a href="prodotto-smartphone.html" class="btn-secondary">Dettagli</a>
+                        <a href="prodotto.html?id=tablet" class="btn-secondary">Dettagli</a>
                         <button class="btn-add" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i></button>
                     </div>
                 </div>
