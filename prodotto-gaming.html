@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Desktop Gaming X | TechStore</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo"><h2><i class="fas fa-microchip"></i> TechStore</h2></div>
+        <nav><ul><li><a href="index.html">Home</a></li><li><a href="catalogo.html">Catalogo</a></li><li><a href="offerte.html">Offerte</a></li></ul></nav>
+        <div class="header-actions">
+            <a href="carrello.html" class="cart-icon"><i class="fas fa-shopping-cart"></i><span id="cart-badge" class="badge">0</span></a>
+        </div>
+    </header>
+    <div class="single-product-container">
+        <div class="product-gallery">
+            <img src="https://images.unsplash.com/photo-1593640495253-23196b27a87f?q=80&w=1000&auto=format&fit=crop" class="main-img" alt="PC Desktop Gaming X">
+        </div>
+        <div class="product-details">
+            <span class="category-tag">Computer</span>
+            <h1>PC Desktop Gaming X</h1>
+            <div class="rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> (95 recensioni)</div>
+            <p class="huge-price">€ 1.850,00</p>
+            <p class="description">Potenza pura per i gamer più esigenti. Processore Intel Core i9 di ultima generazione, GPU RTX 4070 con 12GB VRAM, 32GB di RAM DDR5 e SSD NVMe da 1TB. Case con illuminazione RGB e raffreddamento a liquido. Pronto per il 4K gaming a 144fps.</p>
+            <div class="purchase-actions">
+                <input type="number" value="1" min="1" class="qty-input">
+                <button class="btn-primary add-to-cart-large" onclick="aggiungiAlCarrello()"><i class="fas fa-cart-plus"></i> Aggiungi al Carrello</button>
+            </div>
+            <div class="delivery-info">
+                <p><i class="fas fa-truck"></i> Spedizione gratuita in 24/48h</p>
+                <p><i class="fas fa-undo"></i> Reso gratuito entro 30 giorni</p>
+            </div>
+        </div>
+    </div>
+    <footer><div class="footer-bottom"><p>© 2026 TechStore.</p></div></footer>
+    <script src="script.js"></script>
+</body>
+</html>
